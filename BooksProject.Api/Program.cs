@@ -1,5 +1,5 @@
+using BooksProject.Api.MiddleWare;
 using BooksProject.Application;
-using BooksProject.Core.MiddleWare;
 using BooksProject.Data;
 using BooksProject.Data.DataSeeder;
 using BooksProject.Data.Identity;

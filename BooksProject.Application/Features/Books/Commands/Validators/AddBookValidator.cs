@@ -7,7 +7,6 @@ public class AddBookValidator : AbstractValidator<AddBookCommand>
     public AddBookValidator()
     {
         ApplyValidationRules();
-        ApplyCustomValidationRules();
     }
 
     private void ApplyValidationRules()
@@ -17,10 +16,5 @@ public class AddBookValidator : AbstractValidator<AddBookCommand>
             .NotNull().WithMessage("Title is required!")
             .MaximumLength(30).WithMessage("Title must not be longer than 30 characters!")
             .MinimumLength(3).WithMessage("Title must be at least 3 characters long!");
-    }
-
-    private void ApplyCustomValidationRules()
-    {
-
     }
 }

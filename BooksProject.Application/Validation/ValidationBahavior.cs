@@ -1,13 +1,13 @@
-﻿using FluentValidation;
+﻿using BooksProject.Application.Validation;
+using FluentValidation;
 using MediatR;
+using System.Net;
 
 namespace BooksProject.Core.Bahaviors
 {
-    public class ValidationBehavior<TRequest, TResponse>(IEnumerable<IValidator<TRequest>> validators)
+    public class ValidationBehavior<TRequest, TResponse>(IEnumerable<IValidator<TRequest>> _validators)
         : IPipelineBehavior<TRequest, TResponse> where TRequest : IRequest<TResponse>
     {
-
-        private readonly IEnumerable<IValidator<TRequest>> _validators = validators;
 
         public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
         {
@@ -19,9 +19,15 @@ namespace BooksProject.Core.Bahaviors
 
                 if (failures.Count != 0)
                 {
-                    var message = failures.Select(x => "Error occur in " + x.PropertyName + " : " + x.ErrorMessage).FirstOrDefault();
+                    var errors = failures.Select(x => $"Error in {x.PropertyName}: {x.ErrorMessage}").ToList();
 
-                    throw new ValidationException(message);
+                    // Check for specific validation errors to determine the status code
+
+                    if (failures.Any(f => f.ErrorMessage.Contains("does not exist")))
+                        throw new CustomValidationException(HttpStatusCode.NotFound, errors);
+
+                    else
+                        throw new CustomValidationException(HttpStatusCode.BadRequest, errors);
 
                 }
             }
